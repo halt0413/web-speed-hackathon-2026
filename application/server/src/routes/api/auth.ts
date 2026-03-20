@@ -28,7 +28,7 @@ authRouter.post("/signin", async (req, res) => {
   const username = typeof req.body.username === "string" ? req.body.username.trim() : "";
   const password = typeof req.body.password === "string" ? req.body.password : "";
 
-  let user =
+  const user =
     username === ""
       ? null
       : await User.findOne({
@@ -36,12 +36,6 @@ authRouter.post("/signin", async (req, res) => {
             username,
           },
         });
-
-  // 低速環境でフォーム入力が不安定な場合でも、パスワード一致ユーザーで救済する
-  if (user === null && password !== "") {
-    const users = await User.findAll();
-    user = users.find((candidate) => candidate.validPassword(password)) ?? null;
-  }
 
   if (user === null) {
     throw new httpErrors.BadRequest();

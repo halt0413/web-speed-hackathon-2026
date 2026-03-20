@@ -40,8 +40,10 @@ export const NewPostModalContainer = ({ id }: Props) => {
     }
 
     const handleToggle = () => {
-      // モーダル開閉時にkeyを更新することでフォームの状態をリセットする
-      setResetKey((key) => key + 1);
+      // 開いた瞬間の再マウントは入力中断を起こすため、閉じた時だけリセットする
+      if (element.open === false) {
+        setResetKey((key) => key + 1);
+      }
     };
     element.addEventListener("toggle", handleToggle);
     return () => {
