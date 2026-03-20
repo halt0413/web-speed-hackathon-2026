@@ -1,4 +1,3 @@
-import moment from "moment";
 import { MouseEventHandler, useCallback } from "react";
 import { Link, useNavigate } from "react-router";
 
@@ -31,8 +30,17 @@ interface Props {
   post: Models.Post;
 }
 
+const dateFormatter = new Intl.DateTimeFormat("ja-JP", { dateStyle: "long" });
+
 export const TimelineItem = ({ post }: Props) => {
   const navigate = useNavigate();
+  const createdAtDate = new Date(post.createdAt);
+  const createdAtDisplay = Number.isNaN(createdAtDate.getTime())
+    ? post.createdAt
+    : dateFormatter.format(createdAtDate);
+  const createdAtDateTime = Number.isNaN(createdAtDate.getTime())
+    ? post.createdAt
+    : createdAtDate.toISOString();
 
   /**
    * ボタンやリンク以外の箇所をクリックしたとき かつ 文字が選択されてないとき、投稿詳細ページに遷移する
@@ -48,7 +56,11 @@ export const TimelineItem = ({ post }: Props) => {
   );
 
   return (
-    <article className="hover:bg-cax-surface-subtle px-1 sm:px-4" onClick={handleClick}>
+    <article
+      className="hover:bg-cax-surface-subtle px-1 sm:px-4"
+      onClick={handleClick}
+      style={{ contentVisibility: "auto", containIntrinsicSize: "1px 420px" }}
+    >
       <div className="border-cax-border flex border-b px-2 pt-2 pb-4 sm:px-4">
         <div className="shrink-0 grow-0 pr-2 sm:pr-4">
           <Link
@@ -57,6 +69,7 @@ export const TimelineItem = ({ post }: Props) => {
           >
             <LazyImage
               alt={post.user.profileImage.alt}
+              className="h-full w-full object-cover"
               src={getProfileImagePath(post.user.profileImage.id)}
             />
           </Link>
@@ -77,8 +90,8 @@ export const TimelineItem = ({ post }: Props) => {
             </Link>
             <span className="text-cax-text-muted pr-1">-</span>
             <Link className="text-cax-text-muted pr-1 hover:underline" to={`/posts/${post.id}`}>
-              <time dateTime={moment(post.createdAt).toISOString()}>
-                {moment(post.createdAt).locale("ja").format("LL")}
+              <time dateTime={createdAtDateTime}>
+                {createdAtDisplay}
               </time>
             </Link>
           </p>
