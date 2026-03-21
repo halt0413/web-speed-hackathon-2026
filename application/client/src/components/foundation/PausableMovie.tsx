@@ -66,28 +66,28 @@ export const PausableMovie = ({ src }: Props) => {
   return (
     <div ref={inViewRef} className="w-full">
       <AspectRatioBox aspectHeight={1} aspectWidth={1}>
-        {isLoading || data === null ? (
-          <div className="bg-cax-surface-subtle h-full w-full" />
-        ) : (
-          <button
-            aria-label="動画プレイヤー"
-            className="group relative block h-full w-full"
-            onClick={handleClick}
-            type="button"
-          >
+        <button
+          aria-label="動画プレイヤー"
+          className="group relative block h-full w-full"
+          onClick={handleClick}
+          type="button"
+        >
+          {isLoading || data === null ? (
+            <div className="bg-cax-surface-subtle h-full w-full" />
+          ) : (
             <canvas ref={canvasCallbackRef} className="w-full" />
-            <div
-              className={classNames(
-                "absolute left-1/2 top-1/2 flex items-center justify-center w-16 h-16 text-cax-surface-raised text-3xl bg-cax-overlay/50 rounded-full -translate-x-1/2 -translate-y-1/2",
-                {
-                  "opacity-0 group-hover:opacity-100": isPlaying,
-                },
-              )}
-            >
-              <FontAwesomeIcon iconType={isPlaying ? "pause" : "play"} styleType="solid" />
-            </div>
-          </button>
-        )}
+          )}
+          <div
+            className={classNames(
+              "absolute left-1/2 top-1/2 flex items-center justify-center w-16 h-16 text-cax-surface-raised text-3xl bg-cax-overlay/50 rounded-full -translate-x-1/2 -translate-y-1/2",
+              {
+                "opacity-0 group-hover:opacity-100": isPlaying && isLoading !== true && data !== null,
+              },
+            )}
+          >
+            <FontAwesomeIcon iconType={isPlaying ? "pause" : "play"} styleType="solid" />
+          </div>
+        </button>
       </AspectRatioBox>
     </div>
   );

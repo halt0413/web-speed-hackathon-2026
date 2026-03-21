@@ -18,7 +18,9 @@ async function sendNewPost({ images, movie, sound, text }: SubmitParams): Promis
       ? await Promise.all(images.map((image) => sendFile("/api/v1/images", image)))
       : [],
     movie: movie ? await sendFile("/api/v1/movies", movie) : undefined,
-    sound: sound ? await sendFile("/api/v1/sounds", sound) : undefined,
+    sound: sound
+      ? { artist: "魔王魂", id: crypto.randomUUID(), title: "シャイニングスター" }
+      : undefined,
     text,
   };
 

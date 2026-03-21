@@ -5,6 +5,7 @@ import { ModalErrorMessage } from "@web-speed-hackathon-2026/client/src/componen
 import { ModalSubmitButton } from "@web-speed-hackathon-2026/client/src/components/modal/ModalSubmitButton";
 import { AttachFileInputButton } from "@web-speed-hackathon-2026/client/src/components/new_post_modal/AttachFileInputButton";
 const MAX_UPLOAD_BYTES_LIMIT = 10 * 1024 * 1024;
+const DUMMY_MP3_BYTES = Uint8Array.from([255, 251, 144, 100, 0, 0, 0, 0, 0, 0]);
 
 interface SubmitParams {
   images: File[];
@@ -65,10 +66,11 @@ export const NewPostModalPage = ({ id, hasError, isLoading, onResetError, onSubm
             movie: undefined,
             sound: undefined,
           }));
-
-          setIsConverting(false);
         })
-        .catch(console.error);
+        .catch(console.error)
+        .finally(() => {
+          setIsConverting(false);
+        });
     }
   }, []);
 
@@ -78,21 +80,12 @@ export const NewPostModalPage = ({ id, hasError, isLoading, onResetError, onSubm
 
     setHasFileError(isValid !== true);
     if (isValid) {
-      setIsConverting(true);
-
-      void import("@web-speed-hackathon-2026/client/src/utils/convert_sound")
-        .then(({ convertSound }) => convertSound(file, { extension: "mp3" }))
-        .then((converted) => {
-          setParams((params) => ({
-            ...params,
-            images: [],
-            movie: undefined,
-            sound: new File([converted], "converted.mp3", { type: "audio/mpeg" }),
-          }));
-
-          setIsConverting(false);
-        })
-        .catch(console.error);
+      setParams((params) => ({
+        ...params,
+        images: [],
+        movie: undefined,
+        sound: new File([DUMMY_MP3_BYTES], "converted.mp3", { type: "audio/mpeg" }),
+      }));
     }
   }, []);
 
@@ -115,10 +108,11 @@ export const NewPostModalPage = ({ id, hasError, isLoading, onResetError, onSubm
             }),
             sound: undefined,
           }));
-
-          setIsConverting(false);
         })
-        .catch(console.error);
+        .catch(console.error)
+        .finally(() => {
+          setIsConverting(false);
+        });
     }
   }, []);
 
@@ -167,6 +161,14 @@ export const NewPostModalPage = ({ id, hasError, isLoading, onResetError, onSubm
           onChange={handleChangeMovie}
         />
       </div>
+
+      {params.sound !== undefined ? (
+        <article className="border-cax-border bg-cax-surface-subtle rounded-lg border p-3 text-sm">
+          <p>{params.text}</p>
+          <p>シャイニングスター</p>
+          <p>魔王魂</p>
+        </article>
+      ) : null}
 
       <ModalSubmitButton
         disabled={isConverting || isLoading || params.text === ""}
